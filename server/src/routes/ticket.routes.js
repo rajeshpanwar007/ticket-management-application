@@ -46,4 +46,11 @@ router.patch(
   asyncHandler(ticketController.updateTicket),
 );
 
+router.delete(
+  '/:id',
+  validate(ticketIdParamValidator),
+  validateObjectId('id'),
+  asyncHandler(ticketController.deleteTicket),
+);
+
 export default router;

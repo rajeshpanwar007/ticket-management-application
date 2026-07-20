@@ -5,9 +5,7 @@ import ErrorAlert from '../components/common/ErrorAlert.jsx';
 import EmptyState from '../components/common/EmptyState.jsx';
 import StatusSummaryCards from '../components/tickets/StatusSummaryCards.jsx';
 import RecentTicketsTable from '../components/tickets/RecentTicketsTable.jsx';
-import useTickets from '../hooks/useTickets.js';
-
-// TODO: Implement dashboard page
+import { useTickets } from '../hooks/index.js';
 
 const DashboardPage = () => {
   const navigate = useNavigate();
@@ -19,7 +17,7 @@ const DashboardPage = () => {
   return (
     <div className="dashboard-page">
       <PageHeader title="Dashboard">
-        <button type="button" onClick={() => navigate('/tickets/new')}>
+        <button type="button" className="button button--primary" onClick={() => navigate('/tickets/new')}>
           + Create Ticket
         </button>
       </PageHeader>
@@ -39,7 +37,7 @@ const DashboardPage = () => {
           />
           <RecentTicketsTable
             tickets={tickets}
-            onRowClick={(id) => navigate(`/tickets/${id}`)}
+            onRowClick={(ticketId) => navigate(`/tickets/${ticketId}`)}
             onViewAll={() => navigate('/tickets')}
           />
         </>

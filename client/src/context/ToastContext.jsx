@@ -1,16 +1,23 @@
 import { createContext, useCallback, useContext, useMemo, useState } from 'react';
 
 const ToastContext = createContext(null);
+const TOAST_DURATION_MS = 3000;
 
 export const ToastProvider = ({ children }) => {
   const [toasts, setToasts] = useState([]);
 
-  // TODO: Implement toast display and auto-dismiss
+  const removeToast = useCallback((id) => {
+    setToasts((current) => current.filter((toast) => toast.id !== id));
+  }, []);
 
   const showToast = useCallback((message, type = 'success') => {
-    // TODO: Add toast to state and auto-remove after 3s
-    console.log(`[Toast:${type}]`, message);
-  }, []);
+    const id = `${Date.now()}-${Math.random()}`;
+    setToasts((current) => [...current, { id, message, type }]);
+
+    window.setTimeout(() => {
+      removeToast(id);
+    }, TOAST_DURATION_MS);
+  }, [removeToast]);
 
   const value = useMemo(
     () => ({

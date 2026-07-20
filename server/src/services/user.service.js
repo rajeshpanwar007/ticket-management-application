@@ -1,9 +1,22 @@
-// TODO: Implement user business logic
+import User from '../models/user.model.js';
+import { NotFoundError } from '../errors/index.js';
 
-export const getUsers = async (filters) => {
-  throw new Error('Not implemented: getUsers');
+const USER_PUBLIC_FIELDS = 'name email role';
+
+export const getUsers = async ({ role } = {}) => {
+  const filter = role ? { role } : {};
+
+  const users = await User.find(filter).select(USER_PUBLIC_FIELDS).sort({ name: 1 }).lean();
+
+  return { users, total: users.length };
 };
 
 export const getUserById = async (id) => {
-  throw new Error('Not implemented: getUserById');
+  const user = await User.findById(id).select(USER_PUBLIC_FIELDS).lean();
+
+  if (!user) {
+    throw new NotFoundError('User not found');
+  }
+
+  return user;
 };

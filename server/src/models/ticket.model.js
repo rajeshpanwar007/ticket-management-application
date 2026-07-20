@@ -43,6 +43,10 @@ const ticketSchema = new mongoose.Schema(
       ref: 'User',
       default: null,
     },
+    deletedAt: {
+      type: Date,
+      default: null,
+    },
   },
   {
     timestamps: true,
@@ -62,6 +66,15 @@ ticketSchema.index({ status: 1 }, { name: 'status_index' });
 ticketSchema.index({ createdBy: 1 }, { name: 'createdBy_index' });
 ticketSchema.index({ assignedTo: 1 }, { sparse: true, name: 'assignedTo_index' });
 ticketSchema.index({ createdAt: -1 }, { name: 'createdAt_index' });
+ticketSchema.index({ deletedAt: 1 }, { name: 'deletedAt_index' });
+ticketSchema.index(
+  { deletedAt: 1, createdAt: -1 },
+  { name: 'active_createdAt_index' },
+);
+ticketSchema.index(
+  { deletedAt: 1, status: 1, createdAt: -1 },
+  { name: 'active_status_createdAt_index' },
+);
 ticketSchema.index(
   { title: 'text', description: 'text' },
   { name: 'ticket_text_search', default_language: 'english' },

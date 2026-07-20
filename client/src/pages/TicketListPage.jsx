@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import PageHeader from '../components/common/PageHeader.jsx';
 import LoadingSkeleton from '../components/common/LoadingSkeleton.jsx';
@@ -5,11 +6,7 @@ import ErrorAlert from '../components/common/ErrorAlert.jsx';
 import EmptyState from '../components/common/EmptyState.jsx';
 import SearchAndFilter from '../components/tickets/SearchAndFilter.jsx';
 import TicketTable from '../components/tickets/TicketTable.jsx';
-import useTickets from '../hooks/useTickets.js';
-import useDebounce from '../hooks/useDebounce.js';
-import { useState } from 'react';
-
-// TODO: Implement ticket list page with URL-synced search/filter
+import { useTickets, useDebounce } from '../hooks/index.js';
 
 const TicketListPage = () => {
   const navigate = useNavigate();
@@ -23,14 +20,27 @@ const TicketListPage = () => {
     status,
   });
 
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (debouncedSearch) params.set('search', debouncedSearch);
+    if (status) params.set('status', status);
+    setSearchParams(params, { replace: true });
+  }, [debouncedSearch, status, setSearchParams]);
+
   const handleSearchChange = (value) => {
     setSearch(value);
-    // TODO: Sync search param to URL
   };
 
   const handleStatusChange = (value) => {
-    // TODO: Sync status param to URL
-    setSearchParams(value ? { status: value } : {});
+    const params = new URLSearchParams();
+    if (debouncedSearch) params.set('search', debouncedSearch);
+    if (value) params.set('status', value);
+    setSearchParams(params);
+  };
+
+  const clearFilters = () => {
+    setSearch('');
+    setSearchParams({});
   };
 
   if (loading) return <LoadingSkeleton variant="table" />;
@@ -39,7 +49,7 @@ const TicketListPage = () => {
   return (
     <div className="ticket-list-page">
       <PageHeader title="Tickets">
-        <button type="button" onClick={() => navigate('/tickets/new')}>
+        <button type="button" className="button button--primary" onClick={() => navigate('/tickets/new')}>
           + Create Ticket
         </button>
       </PageHeader>
@@ -58,10 +68,10 @@ const TicketListPage = () => {
           title="No tickets found"
           message="Try adjusting your search or filters."
           actionLabel="Clear Filters"
-          onAction={() => navigate('/tickets')}
+          onAction={clearFilters}
         />
       ) : (
-        <TicketTable tickets={tickets} onRowClick={(id) => navigate(`/tickets/${id}`)} />
+        <TicketTable tickets={tickets} onRowClick={(ticketId) => navigate(`/tickets/${ticketId}`)} />
       )}
     </div>
   );

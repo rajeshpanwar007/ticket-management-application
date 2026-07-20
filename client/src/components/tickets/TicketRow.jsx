@@ -1,7 +1,6 @@
 import StatusBadge from './StatusBadge.jsx';
 import PriorityBadge from './PriorityBadge.jsx';
-
-// TODO: Implement ticket table row
+import { formatDate } from '../../utils/format.js';
 
 const TicketRow = ({ ticket, onClick }) => {
   return (
@@ -10,7 +9,7 @@ const TicketRow = ({ ticket, onClick }) => {
       <td><StatusBadge status={ticket.status} /></td>
       <td><PriorityBadge priority={ticket.priority} /></td>
       <td>{ticket.assignedTo?.name || 'Unassigned'}</td>
-      <td>{ticket.createdAt}</td>
+      <td>{formatDate(ticket.createdAt)}</td>
     </tr>
   );
 };

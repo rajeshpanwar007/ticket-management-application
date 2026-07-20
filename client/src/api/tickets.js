@@ -1,23 +1,26 @@
 import apiClient from './client.js';
 
-// TODO: Implement ticket API calls
-
 export const getTickets = async (params = {}) => {
-  throw new Error('Not implemented: getTickets');
+  const { data } = await apiClient.get('/tickets', { params });
+  return data;
 };
 
 export const getTicketById = async (id) => {
-  throw new Error('Not implemented: getTicketById');
+  const { data } = await apiClient.get(`/tickets/${id}`);
+  return data.ticket;
 };
 
-export const createTicket = async (data) => {
-  throw new Error('Not implemented: createTicket');
+export const createTicket = async (payload) => {
+  const { data } = await apiClient.post('/tickets', payload);
+  return data.ticket;
 };
 
-export const updateTicket = async (id, data) => {
-  throw new Error('Not implemented: updateTicket');
+export const updateTicket = async (id, payload) => {
+  const { data } = await apiClient.patch(`/tickets/${id}`, payload);
+  return data.ticket;
 };
 
 export const updateTicketStatus = async (id, status) => {
-  throw new Error('Not implemented: updateTicketStatus');
+  const { data } = await apiClient.patch(`/tickets/${id}/status`, { status });
+  return data.ticket;
 };

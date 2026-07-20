@@ -1,14 +1,11 @@
-import { useState, useEffect } from 'react';
-
-// TODO: Implement debounce hook
+import { useEffect, useState } from 'react';
 
 const useDebounce = (value, delay = 300) => {
   const [debouncedValue, setDebouncedValue] = useState(value);
 
   useEffect(() => {
-    // TODO: Set timeout to update debouncedValue
-    setDebouncedValue(value);
-    return () => {};
+    const timer = setTimeout(() => setDebouncedValue(value), delay);
+    return () => clearTimeout(timer);
   }, [value, delay]);
 
   return debouncedValue;

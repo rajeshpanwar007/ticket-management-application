@@ -1,16 +1,15 @@
-import { body, param } from 'express-validator';
+import { param } from 'express-validator';
+import {
+  requiredCommentBodyValidator,
+  requiredMongoIdValidator,
+} from './shared/fieldValidators.js';
+
+export const ticketCommentsParamValidator = [
+  param('id').isMongoId().withMessage('Invalid ticket ID'),
+];
 
 export const addCommentValidator = [
-  param('id').isMongoId().withMessage('Invalid ticket ID'),
-  body('body')
-    .trim()
-    .notEmpty()
-    .withMessage('Comment body is required')
-    .isLength({ max: 2000 })
-    .withMessage('Comment cannot exceed 2000 characters'),
-  body('authorId')
-    .notEmpty()
-    .withMessage('Author ID is required')
-    .isMongoId()
-    .withMessage('Invalid authorId'),
+  ...ticketCommentsParamValidator,
+  requiredCommentBodyValidator(),
+  requiredMongoIdValidator('authorId', 'Author'),
 ];

@@ -1,4 +1,4 @@
-// TODO: Implement ticket metadata display
+import { formatDateTime } from '../../utils/format.js';
 
 const TicketMetadata = ({ ticket }) => {
   return (
@@ -10,9 +10,9 @@ const TicketMetadata = ({ ticket }) => {
       <dt>Assigned to</dt>
       <dd>{ticket?.assignedTo?.name || 'Unassigned'}</dd>
       <dt>Created</dt>
-      <dd>{ticket?.createdAt}</dd>
+      <dd>{formatDateTime(ticket?.createdAt)}</dd>
       <dt>Last updated</dt>
-      <dd>{ticket?.updatedAt}</dd>
+      <dd>{formatDateTime(ticket?.updatedAt)}</dd>
     </dl>
   );
 };

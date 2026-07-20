@@ -1,32 +1,28 @@
-import { useState, useEffect, useCallback } from 'react';
-import * as ticketsApi from '../api/tickets.js';
+import { useCallback } from 'react';
+import { ticketService } from '../services/index.js';
+import useAsync from './useAsync.js';
 
-// TODO: Implement tickets list hook
+const useTickets = ({ search, status, page, limit } = {}) => {
+  const fetchTickets = useCallback(() => {
+    const params = {};
+    if (search) params.search = search;
+    if (status) params.status = status;
+    if (page) params.page = page;
+    if (limit) params.limit = limit;
+    return ticketService.getTickets(params);
+  }, [search, status, page, limit]);
 
-const useTickets = ({ search, status } = {}) => {
-  const [tickets, setTickets] = useState([]);
-  const [total, setTotal] = useState(0);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const { data, loading, error, refetch } = useAsync(fetchTickets, [fetchTickets], {
+    initialData: { tickets: [], total: 0 },
+  });
 
-  const refetch = useCallback(async () => {
-    // TODO: Call ticketsApi.getTickets({ search, status })
-    setLoading(true);
-    setError(null);
-    try {
-      throw new Error('Not implemented: useTickets');
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  }, [search, status]);
-
-  useEffect(() => {
-    refetch();
-  }, [refetch]);
-
-  return { tickets, total, loading, error, refetch };
+  return {
+    tickets: data?.tickets ?? [],
+    total: data?.total ?? 0,
+    loading,
+    error,
+    refetch,
+  };
 };
 
 export default useTickets;

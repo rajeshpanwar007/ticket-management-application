@@ -19,16 +19,13 @@ export const PRIORITY_LABELS = {
 // TODO: Mirror server transition map — see server/src/domain/statusMachine.js
 export const TRANSITIONS = {
   open: ['in_progress', 'cancelled'],
-  in_progress: ['resolved'],
+  in_progress: ['resolved', 'cancelled'],
   resolved: ['closed'],
   closed: [],
   cancelled: [],
 };
 
-export const allowedNextStatuses = (currentStatus) => {
-  // TODO: Implement
-  return TRANSITIONS[currentStatus] ?? [];
-};
+export const allowedNextStatuses = (currentStatus) => TRANSITIONS[currentStatus] ?? [];
 
 export const STATUS_ACTION_LABELS = {
   in_progress: 'Start Progress',

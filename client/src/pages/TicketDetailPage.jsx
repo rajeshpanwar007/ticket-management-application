@@ -6,36 +6,45 @@ import TicketDetailHeader from '../components/tickets/TicketDetailHeader.jsx';
 import TicketMetadata from '../components/tickets/TicketMetadata.jsx';
 import StatusActions from '../components/tickets/StatusActions.jsx';
 import CommentSection from '../components/comments/CommentSection.jsx';
-import useTicket from '../hooks/useTicket.js';
-import useUsers from '../hooks/useUsers.js';
-import { useState } from 'react';
-
-// TODO: Implement ticket detail page
+import {
+  useTicket,
+  useUsers,
+  useUpdateTicketStatus,
+  useAddComment,
+} from '../hooks/index.js';
 
 const TicketDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { ticket, loading, error, refetch } = useTicket(id);
   const { users } = useUsers();
-  const [statusError, setStatusError] = useState(null);
-  const [statusLoading, setStatusLoading] = useState(false);
+
+  const {
+    mutate: updateStatus,
+    loading: statusLoading,
+    error: statusError,
+    reset: resetStatusError,
+  } = useUpdateTicketStatus({
+    onSuccess: () => refetch(),
+  });
+
+  const {
+    mutate: addComment,
+    loading: commentLoading,
+    error: commentError,
+    reset: resetCommentError,
+  } = useAddComment({
+    onSuccess: () => refetch(),
+  });
 
   const handleStatusTransition = async (status) => {
-    // TODO: Call updateTicketStatus API
-    setStatusLoading(true);
-    setStatusError(null);
-    try {
-      throw new Error('Not implemented: status transition');
-    } catch (err) {
-      setStatusError(err.message);
-    } finally {
-      setStatusLoading(false);
-    }
+    resetStatusError();
+    await updateStatus({ id, status });
   };
 
   const handleAddComment = async (data) => {
-    // TODO: Call addComment API and refetch
-    console.log('Add comment:', data);
+    resetCommentError();
+    await addComment({ ticketId: id, payload: data });
   };
 
   if (loading) return <LoadingSkeleton variant="detail" />;
@@ -52,12 +61,14 @@ const TicketDetailPage = () => {
         onTransition={handleStatusTransition}
         loading={statusLoading}
         error={statusError}
-        onDismissError={() => setStatusError(null)}
+        onDismissError={resetStatusError}
       />
       <CommentSection
         comments={ticket.comments || []}
         users={users}
         onAddComment={handleAddComment}
+        isSubmitting={commentLoading}
+        error={commentError}
       />
     </div>
   );

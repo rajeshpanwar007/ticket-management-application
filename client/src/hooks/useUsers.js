@@ -1,31 +1,24 @@
-import { useState, useEffect, useCallback } from 'react';
-import * as usersApi from '../api/users.js';
-
-// TODO: Implement users hook
+import { useCallback } from 'react';
+import { userService } from '../services/index.js';
+import useAsync from './useAsync.js';
 
 const useUsers = ({ role } = {}) => {
-  const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-
-  const refetch = useCallback(async () => {
-    // TODO: Call usersApi.getUsers({ role })
-    setLoading(true);
-    setError(null);
-    try {
-      throw new Error('Not implemented: useUsers');
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
+  const fetchUsers = useCallback(() => {
+    const params = role ? { role } : {};
+    return userService.getUsers(params);
   }, [role]);
 
-  useEffect(() => {
-    refetch();
-  }, [refetch]);
+  const { data, loading, error, refetch } = useAsync(fetchUsers, [fetchUsers], {
+    initialData: { users: [], total: 0 },
+  });
 
-  return { users, loading, error, refetch };
+  return {
+    users: data?.users ?? [],
+    total: data?.total ?? 0,
+    loading,
+    error,
+    refetch,
+  };
 };
 
 export default useUsers;

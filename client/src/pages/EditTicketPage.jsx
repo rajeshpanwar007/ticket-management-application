@@ -5,20 +5,19 @@ import LoadingSkeleton from '../components/common/LoadingSkeleton.jsx';
 import ErrorAlert from '../components/common/ErrorAlert.jsx';
 import StatusBadge from '../components/tickets/StatusBadge.jsx';
 import TicketForm from '../components/tickets/TicketForm.jsx';
-import useTicket from '../hooks/useTicket.js';
-import useUsers from '../hooks/useUsers.js';
-
-// TODO: Implement edit ticket page
+import { useTicket, useUsers, useUpdateTicket } from '../hooks/index.js';
 
 const EditTicketPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { ticket, loading, error, refetch } = useTicket(id);
   const { users } = useUsers();
+  const { mutate, loading: isSubmitting, error: submitError, fieldErrors } = useUpdateTicket({
+    onSuccess: () => navigate(`/tickets/${id}`),
+  });
 
   const handleSubmit = async (data) => {
-    // TODO: Call updateTicket API and navigate to detail
-    console.log('Update ticket:', data);
+    await mutate({ id, payload: data });
   };
 
   if (loading) return <LoadingSkeleton variant="form" />;
@@ -29,11 +28,16 @@ const EditTicketPage = () => {
     <div className="edit-ticket-page">
       <BackLink to={`/tickets/${id}`} label="Back to Ticket" />
       <PageHeader title="Edit Ticket" />
-      <p>Status: <StatusBadge status={ticket.status} /> (read-only)</p>
+      <p className="edit-ticket-page__status">
+        Status: <StatusBadge status={ticket.status} /> (read-only — use detail page to change status)
+      </p>
+      {submitError && <ErrorAlert message={submitError} />}
       <TicketForm
         mode="edit"
         initialValues={ticket}
         users={users}
+        errors={fieldErrors}
+        isSubmitting={isSubmitting}
         onSubmit={handleSubmit}
         onCancel={() => navigate(`/tickets/${id}`)}
       />

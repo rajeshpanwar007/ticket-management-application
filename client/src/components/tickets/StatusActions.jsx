@@ -1,7 +1,4 @@
 import StatusButton from './StatusButton.jsx';
-import ErrorAlert from '../common/ErrorAlert.jsx';
-
-// TODO: Implement status actions container
 
 const StatusActions = ({ allowedNextStatuses = [], onTransition, loading = false, error, onDismissError }) => {
   if (!allowedNextStatuses.length) {
@@ -21,7 +18,16 @@ const StatusActions = ({ allowedNextStatuses = [], onTransition, loading = false
           />
         ))}
       </div>
-      {error && <ErrorAlert message={error} onRetry={onDismissError} />}
+      {error && (
+        <div className="error-alert" role="alert">
+          <p className="error-alert__message">{error}</p>
+          {onDismissError && (
+            <button type="button" className="error-alert__retry" onClick={onDismissError}>
+              Dismiss
+            </button>
+          )}
+        </div>
+      )}
     </section>
   );
 };

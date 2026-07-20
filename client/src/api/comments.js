@@ -1,7 +1,11 @@
 import apiClient from './client.js';
 
-// TODO: Implement comment API calls
+export const getComments = async (ticketId) => {
+  const { data } = await apiClient.get(`/tickets/${ticketId}/comments`);
+  return data;
+};
 
-export const addComment = async (ticketId, data) => {
-  throw new Error('Not implemented: addComment');
+export const addComment = async (ticketId, payload) => {
+  const { data } = await apiClient.post(`/tickets/${ticketId}/comments`, payload);
+  return data.comment;
 };

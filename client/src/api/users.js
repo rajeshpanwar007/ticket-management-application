@@ -1,11 +1,11 @@
 import apiClient from './client.js';
 
-// TODO: Implement user API calls
-
 export const getUsers = async (params = {}) => {
-  throw new Error('Not implemented: getUsers');
+  const { data } = await apiClient.get('/users', { params });
+  return data;
 };
 
 export const getUserById = async (id) => {
-  throw new Error('Not implemented: getUserById');
+  const { data } = await apiClient.get(`/users/${id}`);
+  return data.user;
 };
